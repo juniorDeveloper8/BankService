@@ -1,6 +1,7 @@
 package com.rober.bank.controller;
 
 import com.rober.bank.dto.BankResponse;
+import com.rober.bank.dto.CreditDebitRequest;
 import com.rober.bank.dto.EnquiryRequest;
 import com.rober.bank.dto.UserRequest;
 import com.rober.bank.service.impl.UserService;
@@ -27,6 +28,11 @@ public class UserController {
     @GetMapping("nameEnquiry")
     public String nameEnquiry(@RequestBody EnquiryRequest request) {
         return userService.nameEnquiry(request);
+    }
+
+    @PostMapping("credit")
+    public BankResponse creditAccount(@RequestBody CreditDebitRequest request) {
+        return userService.creditAccount(request);
     }
 
 }

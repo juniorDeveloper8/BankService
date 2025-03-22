@@ -17,6 +17,10 @@ public class AccountUtils {
     public static final String ACCOUNT_FOUND_CODE = "004";
     public static final String ACCOUNT_FOUND_SUCCESS = "User Account Fount";
 
+    public static final String ACCOUNT_CREDITED_SUCCESS = "005";
+    public static final String ACCOUNT_CREDITED_SUCCESS_MESSAGE = "User Account credited aprudmend";
+
+
     public static String generatedAccountNumber() {
 
         // Obtenemos el año actual
