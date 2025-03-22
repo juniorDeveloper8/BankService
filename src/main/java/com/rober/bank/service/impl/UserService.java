@@ -1,9 +1,6 @@
 package com.rober.bank.service.impl;
 
-import com.rober.bank.dto.BankResponse;
-import com.rober.bank.dto.CreditDebitRequest;
-import com.rober.bank.dto.EnquiryRequest;
-import com.rober.bank.dto.UserRequest;
+import com.rober.bank.dto.*;
 
 public interface UserService {
 
@@ -16,5 +13,7 @@ public interface UserService {
     BankResponse creditAccount(CreditDebitRequest request);
 
     BankResponse debitAccount(CreditDebitRequest request);
+
+    BankResponse transfer(TransferRequest request);
 
 }
