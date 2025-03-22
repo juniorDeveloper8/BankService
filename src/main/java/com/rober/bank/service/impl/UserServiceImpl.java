@@ -20,10 +20,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public BankResponse createAccount(UserRequest userRequest) {
         /**
-         * creating an account  -  saving a new user into the bd
-         * check if user alredy has an account
+         * creamos la cuenta - guardamos el nuevo usuario en la base
+         * chequeamos la cuenta ya existe
          */
 
+        // Verificamos si ya existe una cuenta para el usuario con el email proporcionado
         if (repository.existsByEmail(userRequest.getEmail())) {
             return BankResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_EXISTS_CODE)
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
 
         }
 
+        // Creamos un nuevo objeto 'User' con la información proporcionada en el request
         User newUser = User.builder()
                 .firstName(userRequest.getFirstName())
                 .lastName(userRequest.getLastName())
@@ -48,6 +50,7 @@ public class UserServiceImpl implements UserService {
                 .status("ACTIVE")
                 .build();
         User savedUser = repository.save(newUser);
+        // Devolvemos una respuesta de éxito con la información de la cuenta
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS)
                 .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
