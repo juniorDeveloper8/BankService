@@ -1,4 +1,4 @@
-package com.rober.bak.entity;
+package com.rober.bank.entity;
 
 
 import jakarta.persistence.*;
@@ -21,6 +21,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String firstName;
     private String lastName;
     private String otherName;

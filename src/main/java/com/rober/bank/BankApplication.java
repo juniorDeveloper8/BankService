@@ -1,13 +1,13 @@
-package com.rober.bak;
+package com.rober.bank;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BakApplication {
+public class BankApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BakApplication.class, args);
+		SpringApplication.run(BankApplication.class, args);
 	}
 
 }

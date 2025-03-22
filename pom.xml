@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.rober</groupId>
-	<artifactId>bak</artifactId>
+	<artifactId>bank</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bak</name>
 	<description>Building a demo Banking Application</description>
