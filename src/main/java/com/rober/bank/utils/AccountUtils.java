@@ -14,24 +14,24 @@ public class AccountUtils {
 
     public static String generatedAccountNumber() {
 
-        /**
-         * ex. 2024 + randomSixDigits
-         */
-
+        // Obtenemos el año actual
         Year currentYear = Year.now();
+
+        // Establecemos el rango para los números aleatorios de 6 dígitos
         int min = 100000;
         int max = 999999;
 
-        // generamos el los digitos random con el min & max
+        // Generamos un número aleatorio entre min y max
 
         int randNumber = (int) Math.floor(Math.random() * (max - min + 1) + min);
 
-        // convertimos el actual y numero random en string, los conetamos
+        // Convertimos el año y el número aleatorio en cadenas de texto (Strings)
 
         String year = String.valueOf(currentYear);
         String randomNumber = String.valueOf(randNumber);
         StringBuilder accounNumber = new StringBuilder();
 
+        // Devolvemos el número de cuenta generado
         return accounNumber.append(year).append(randomNumber).toString();
 
     }
