@@ -2,6 +2,7 @@ package com.rober.bank.service.impl;
 
 import com.rober.bank.dto.AccountInfo;
 import com.rober.bank.dto.BankResponse;
+import com.rober.bank.dto.EmailDetails;
 import com.rober.bank.dto.UserRequest;
 import com.rober.bank.entity.User;
 import com.rober.bank.repository.UserRepository;
@@ -16,6 +17,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository repository;
+
+    @Autowired
+    EmailService emailService;
 
     @Override
     public BankResponse createAccount(UserRequest userRequest) {
@@ -50,6 +54,17 @@ public class UserServiceImpl implements UserService {
                 .status("ACTIVE")
                 .build();
         User savedUser = repository.save(newUser);
+        // enviamos el mesaje de alerte al email
+
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(savedUser.getEmail())
+                .subject("ACCOUNT CREATION")
+                .messageBody("Congratulations! Your Account Has been Successfully Created. \n Your Account Details: \n" +
+                        "Account Name: " + savedUser.getFirstName() + " " + savedUser.getLastName() + " " + savedUser.getOtherName() + "\nAccount Number: " + savedUser.getAccountNumber())
+                .build();
+
+        emailService.sendEmailAlert(emailDetails);
+
         // Devolvemos una respuesta de éxito con la información de la cuenta
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS)
