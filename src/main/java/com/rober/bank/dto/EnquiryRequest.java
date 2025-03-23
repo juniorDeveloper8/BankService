@@ -1,5 +1,6 @@
 package com.rober.bank.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,5 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EnquiryRequest {
+    @Schema(
+            name = "Enquiry account Number"
+    )
     private String accountNumber;
 }
