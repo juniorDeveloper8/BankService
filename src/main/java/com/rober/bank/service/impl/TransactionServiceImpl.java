@@ -14,6 +14,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void savedTransaction(TransactionDTO transactionDTO) {
+
+        // Se crea un objeto de tipo Transaction usando los datos proporcionados en el DTO de transacción
         Transaction transaction = Transaction.builder()
                 .transactionType(transactionDTO.getTransactionType())
                 .accountNumber(transactionDTO.getAccountNumber())

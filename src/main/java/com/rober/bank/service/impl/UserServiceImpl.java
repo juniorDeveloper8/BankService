@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public BankResponse balanceEnquiry(EnquiryRequest request) {
-        // check is the provided account number exist in db
+        // Verifica si el número de cuenta existe en la base de datos
 
         boolean isAccountExist = repository.existsByAccountNumber(request.getAccountNumber());
 
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
                     .accountInfo(null)
                     .build();
         }
-
+        // Si la cuenta existe, busca la información del usuario
         User foundUser = repository.findByAccountNumber(request.getAccountNumber());
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_FOUND_CODE)
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public BankResponse creditAccount(CreditDebitRequest request) {
-        //checking if the account exists
+        // Verifica si el número de cuenta existe en la base de datos
 
         boolean isAccountExist = repository.existsByAccountNumber(request.getAccountNumber());
 
@@ -134,10 +134,11 @@ public class UserServiceImpl implements UserService {
 
         User userToCredit = repository.findByAccountNumber(request.getAccountNumber());
 
+        // Actualiza el saldo de la cuenta sumando el monto que se va a acreditar
         userToCredit.setAccountBalance(userToCredit.getAccountBalance().add(request.getAmount()));
         repository.save(userToCredit);
 
-        //save transaction
+        // Guarda la transacción de crédito en el sistema
         TransactionDTO transactionDTO = TransactionDTO.builder()
                 .accountNumber(userToCredit.getAccountNumber())
                 .transactionType("CREDIT")
@@ -146,6 +147,7 @@ public class UserServiceImpl implements UserService {
 
         service.savedTransaction(transactionDTO);
 
+        // Retorna la respuesta exitosa con el código de éxito y la nueva información de la cuenta
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREDITED_SUCCESS)
                 .responseMessage(AccountUtils.ACCOUNT_CREDITED_SUCCESS_MESSAGE)
@@ -159,8 +161,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public BankResponse debitAccount(CreditDebitRequest request) {
-        //check if the account exists
-        //check if the amount you intend to withdraw is not more than the current account balance
+        // Verifica si el número de cuenta existe en la base de datos
+        // Además, se verificará que el monto que se intenta retirar no sea mayor al saldo disponible
 
         boolean isAccountExist = repository.existsByAccountNumber(request.getAccountNumber());
 
@@ -173,11 +175,11 @@ public class UserServiceImpl implements UserService {
         }
 
         User userToDebit = repository.findByAccountNumber(request.getAccountNumber());
-
+        // Convierte el saldo disponible y el monto a debitar a tipo BigInteger para compararlos
         BigInteger availableBalance = userToDebit.getAccountBalance().toBigInteger();
-
         BigInteger debitAmount = request.getAmount().toBigInteger();
 
+        // Verifica si el saldo disponible es menor al monto a debitar (saldo insuficiente)
         if (availableBalance.intValue() < debitAmount.intValue()) {
             return BankResponse.builder()
                     .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
@@ -185,10 +187,11 @@ public class UserServiceImpl implements UserService {
                     .accountInfo(null)
                     .build();
         } else {
+            // Si el saldo es suficiente, se realiza el débito (se resta el monto del saldo)
             userToDebit.setAccountBalance(userToDebit.getAccountBalance().subtract(request.getAmount()));
             repository.save(userToDebit);
 
-            //save transaction
+            // Guarda la transacción de crédito en el sistema
             TransactionDTO transactionDTO = TransactionDTO.builder()
                     .accountNumber(userToDebit.getAccountNumber())
                     .transactionType("CREDIT")
@@ -197,6 +200,7 @@ public class UserServiceImpl implements UserService {
 
             service.savedTransaction(transactionDTO);
 
+            // Retorna la respuesta exitosa con el código de éxito y la nueva información de la cuenta
             return BankResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_DEBITED_SUCCESS)
                     .responseMessage(AccountUtils.ACCOUNT_DEBITED_MESSAGE)
@@ -212,13 +216,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public BankResponse transfer(TransferRequest request) {
         /**
-         * get the account to debit (check if it exists)
-         * check if the amount i'm debiting is not more than the current balance
-         * debit the account
-         * get the account to credit
-         * credit the account
+         * Obtener la cuenta de origen (verificar si existe)
+         * Verificar que el monto a transferir no sea mayor que el saldo actual
+         * Debitar la cuenta de origen
+         * Obtener la cuenta de destino
+         * Acreditar la cuenta de destino
          */
 
+        // Verifica si el número de cuenta existe en la base de datos
         boolean isAccountExist = repository.existsByAccountNumber(request.getDestinationAccountNumber());
         if (!isAccountExist) {
             return BankResponse.builder()
@@ -228,7 +233,10 @@ public class UserServiceImpl implements UserService {
                     .build();
         }
 
+        // Obtiene la cuenta de origen (usuario que realizará la transferencia)
         User sourceAccountUser = repository.findByAccountNumber(request.getSourceAccountNumber());
+
+        // Verifica si el monto a transferir es mayor que el saldo disponible en la cuenta de origen
         if (request.getAmount().compareTo(sourceAccountUser.getAccountBalance()) > 0) {
             return BankResponse.builder()
                     .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
@@ -237,11 +245,13 @@ public class UserServiceImpl implements UserService {
                     .build();
         }
 
+        // Si el saldo es suficiente, se debita el monto de la cuenta de origen
         sourceAccountUser.setAccountBalance(sourceAccountUser.getAccountBalance().subtract(request.getAmount()));
         String sourceUsername = sourceAccountUser.getFirstName() + " " + sourceAccountUser.getLastName() + " " + sourceAccountUser.getOtherName();
 
         repository.save(sourceAccountUser);
 
+        // Envía un correo de alerta de débito al usuario de la cuenta de origen
         EmailDetails detailsAlert = EmailDetails.builder()
                 .subject("DEBIT ALERT")
                 .recipient(sourceAccountUser.getEmail())
@@ -250,7 +260,10 @@ public class UserServiceImpl implements UserService {
 
         emailService.sendEmailAlert(detailsAlert);
 
+        // Obtiene la cuenta de destino (usuario que recibirá la transferencia)
         User destinationAccountUser = repository.findByAccountNumber(request.getDestinationAccountNumber());
+
+        // Acredita el monto a la cuenta de destino
         destinationAccountUser.setAccountBalance(destinationAccountUser.getAccountBalance().add(request.getAmount()));
         //String recipientUsername = destinationAccountUser.getFirstName() + " " + destinationAccountUser.getLastName() + " " + destinationAccountUser.getOtherName();
         repository.save(destinationAccountUser);
@@ -262,7 +275,7 @@ public class UserServiceImpl implements UserService {
 
         emailService.sendEmailAlert(creditAlert);
 
-        //save transaction
+        // Guarda la transacción de crédito en el sistema
         TransactionDTO transactionDTO = TransactionDTO.builder()
                 .accountNumber(destinationAccountUser.getAccountNumber())
                 .transactionType("CREDIT")
@@ -271,13 +284,11 @@ public class UserServiceImpl implements UserService {
 
         service.savedTransaction(transactionDTO);
 
+        // Devuelve la respuesta exitosa de la transferencia
         return BankResponse.builder()
                 .responseCode(AccountUtils.TRANSFER_SUCCESSFUL_CODE)
                 .responseMessage(AccountUtils.TRANSFER_SUCCESSFUL_MESSAGE)
                 .accountInfo(null)
                 .build();
-
     }
-
-
 }
