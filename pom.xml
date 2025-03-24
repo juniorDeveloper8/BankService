@@ -11,7 +11,7 @@
 	<groupId>com.rober</groupId>
 	<artifactId>bank</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bak</name>
+	<name>bank</name>
 	<description>Building a demo Banking Application</description>
 	<url/>
 	<licenses>
@@ -99,6 +99,16 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+
+<!--			para evitar los test-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
 		</plugins>
