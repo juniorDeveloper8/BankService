@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 contact = @Contact(
                         name = "Roberth Zambrano",
                         url = "https://github.com/juniorDeveloper8/",
-                        email = "oscuridadd38@gmail.com"
+                        email = "${spring.mail.username}"
                 ),
                 license = @License(
                         name = "copyleft"
