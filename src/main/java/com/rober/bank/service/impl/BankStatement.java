@@ -4,6 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.rober.bank.dto.EmailDetails;
 import com.rober.bank.entity.Transaction;
 import com.rober.bank.entity.User;
 import com.rober.bank.repository.TransactionRepository;
@@ -29,6 +30,8 @@ public class BankStatement {
     private static final String FILE = "C:\\Users\\rober\\Downloads\\Report.pdf";
 
     private UserRepository userRepository;
+
+    private EmailService service;
 
     /**
      * Obtiene la lista de transacciones dentro de un rango de fechas para un número de cuenta específico.
@@ -127,6 +130,16 @@ public class BankStatement {
         document.add(transactionsTable);
 
         document.close();
+
+        // Enviamos el reporte al correo electronico
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(user.getEmail())
+                .subject("STATEMENT OF ACCOUNT")
+                .messageBody("kindly find your requested account statement attached!")
+                .attachment(FILE)
+                .build();
+
+        service.sendEmailWithAttachment(emailDetails);
 
         // Retornamos la lista de transacciones procesadas
         return transactionList;
