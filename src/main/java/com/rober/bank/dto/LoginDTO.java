@@ -16,6 +16,7 @@ public class LoginDTO {
             name = "email"
     )
     private String email;
+
     @Schema(
             name = "password"
     )
