@@ -1,8 +1,8 @@
 version: "3.9"
 services:
   rol-api:
-    image: Api-Bank
-    container_name: Bank-Service
+    image: api-bank
+    container_name: bank_service
     build:
       context: .
       dockerfile: Dockerfile
@@ -12,12 +12,10 @@ services:
       - spring-network
     depends_on:
       - mysql
-    environment:
-      - JWT_SECRET=123456
 
   mysql:
-    image: mysql:8
-    container_name: DB_BANK
+    image: 9b6f08c39533
+    container_name: db_bank
     environment:
       MYSQL_ROOT_PASSWORD: roberth456
       MYSQL_DATABASE: DB_Banco
