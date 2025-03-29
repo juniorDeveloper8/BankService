@@ -47,6 +47,11 @@ public class UserRequest {
     private String email;
 
     @Schema(
+            name = "User password"
+    )
+    private String password;
+
+    @Schema(
             name = "User phoneNumber"
     )
     private String phoneNumber;

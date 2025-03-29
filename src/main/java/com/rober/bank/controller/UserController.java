@@ -24,6 +24,11 @@ public class UserController {
             responseCode = "201",
             description = "Http Status 201 CREATED"
     )
+    @PostMapping("login")
+    public BankResponse login(@RequestBody LoginDTO loginDTO) {
+        return userService.login(loginDTO);
+    }
+
     @PostMapping
     public BankResponse createAccount(@RequestBody UserRequest userRequest) {
         return userService.createAccount(userRequest);
