@@ -15,12 +15,12 @@ import java.math.BigDecimal;
 public class CreditDebitRequest {
 
     @Schema(
-            name = "Credit & Debit account number"
+            name = "accountNumber"
     )
     private String accountNumber;
 
     @Schema(
-            name = "Credit & Debit amount"
+            name = "amount"
     )
     private BigDecimal amount;
 }

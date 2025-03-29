@@ -14,22 +14,19 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class TransactionDTO {
     @Schema(
-            name = "Transaction transaction Type"
+            name = "transactionType"
     )
     private String transactionType;
 
     @Schema(
-            name = "Transaction amount"
+            name = "amount"
     )
     private BigDecimal amount;
 
     @Schema(
-            name = "Transaction account Number"
+            name = "accountNumber"
     )
     private String accountNumber;
 
-    @Schema(
-            name = "Transaction status"
-    )
     private String status;
 }

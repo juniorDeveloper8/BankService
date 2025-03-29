@@ -12,47 +12,52 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserRequest {
     @Schema(
-            name = "User firstName"
+            name = "firstName"
     )
     private String firstName;
 
     @Schema(
-            name = "User lastName"
+            name = "lastName"
     )
     private String lastName;
 
     @Schema(
-            name = "User other Name"
+            name = "otherName"
     )
     private String otherName;
 
     @Schema(
-            name = "User gender"
+            name = "gender"
     )
     private String gender;
 
     @Schema(
-            name = "User address"
+            name = "address"
     )
     private String address;
 
     @Schema(
-            name = "User state Of Origin"
+            name = "stateOfOrigin"
     )
     private String stateOfOrigin;
 
     @Schema(
-            name = "User email"
+            name = "email"
     )
     private String email;
 
     @Schema(
-            name = "User phoneNumber"
+            name = "password"
+    )
+    private String password;
+
+    @Schema(
+            name = "phoneNumber"
     )
     private String phoneNumber;
 
     @Schema(
-            name = "User alternative PhoneNumber"
+            name = "alternativePhoneNumber"
     )
     private String alternativePhoneNumber;
 }

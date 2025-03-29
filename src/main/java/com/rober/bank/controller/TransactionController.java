@@ -6,7 +6,6 @@ import com.rober.bank.service.impl.BankStatement;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +27,10 @@ public class TransactionController {
             summary = "Generate a bank statement PDF for a specific account and date range",
             description = "Generates a bank statement PDF for the provided account number and date range. Returns a list of transactions."
     )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Statement generated successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid parameters provided"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
+    @ApiResponse(
+            responseCode = "200",
+            description = "Http Status 200 SUCCESS"
+    )
     @GetMapping
     public List<Transaction> generateBankStatement(
 

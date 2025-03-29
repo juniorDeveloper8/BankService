@@ -6,25 +6,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountInfo {
-    @Schema(
-            name = "accountName"
-    )
-    private String accountName;
+public class LoginDTO {
 
     @Schema(
-            name = "accountBalance"
+            name = "email"
     )
-    private BigDecimal accountBalance;
-
+    private String email;
     @Schema(
-            name = "accountNumber"
+            name = "password"
     )
-    private String accountNumber;
+    private String password;
 }

@@ -13,22 +13,22 @@ import lombok.NoArgsConstructor;
 public class EmailDetails {
 
     @Schema(
-            name = "Email Details recipient"
+            name = "recipient"
     )
     private String recipient;
 
     @Schema(
-            name = "Email Details message Body"
+            name = "messageBody"
     )
     private String messageBody;
 
     @Schema(
-            name = "Email Details subject"
+            name = "subject"
     )
     private String subject;
 
     @Schema(
-            name = "Email Details attachment"
+            name = "attachment"
     )
     private String attachment;
 }

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EnquiryRequest {
     @Schema(
-            name = "Enquiry account Number"
+            name = "accountNumber"
     )
     private String accountNumber;
 }

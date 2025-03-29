@@ -15,15 +15,15 @@ import java.math.BigDecimal;
 public class TransferRequest {
 
     @Schema(
-            name = "Transfer source Account Number"
+            name = "sourceAccountNumber"
     )
     private String sourceAccountNumber;
     @Schema(
-            name = "Transfer destination Account Number"
+            name = "destinationAccountNumber"
     )
     private String destinationAccountNumber;
     @Schema(
-            name = "Transfer amount"
+            name = "amount"
     )
     private BigDecimal amount;
 }

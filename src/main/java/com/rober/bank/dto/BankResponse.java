@@ -12,17 +12,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BankResponse {
     @Schema(
-            name = "Bank response code"
+            name = "responseCode"
     )
     private String responseCode;
 
     @Schema(
-            name = "Bank response message"
+            name = "responseMessage"
     )
     private String responseMessage;
 
     @Schema(
-            name = "Bank account info"
+            name = "accountInfo"
     )
     private AccountInfo accountInfo;
 }
