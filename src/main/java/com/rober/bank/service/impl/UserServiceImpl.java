@@ -1,5 +1,6 @@
 package com.rober.bank.service.impl;
 
+import com.google.zxing.common.BitMatrix;
 import com.rober.bank.config.JwtTokenProvider;
 import com.rober.bank.dto.*;
 import com.rober.bank.entity.Role;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -35,6 +37,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
+    private QRCodeGenerator qrCodeGenerator;
 
     @Autowired
     JwtTokenProvider jwtTokenProvider;
@@ -329,6 +334,103 @@ public class UserServiceImpl implements UserService {
                 .responseCode(AccountUtils.TRANSFER_SUCCESSFUL_CODE)
                 .responseMessage(AccountUtils.TRANSFER_SUCCESSFUL_MESSAGE)
                 .accountInfo(null)
+                .build();
+    }
+
+    @Override
+    public QRCodeResponse transferQR(QRTransferRequest request) {
+        // 1. Validar si el código QR es válido (en este caso solo existe QR para la transferencia)
+        if (request.getQrCodeData() == null || request.getQrCodeData().isEmpty()) {
+            return QRCodeResponse.builder()
+                    .responseCode(AccountUtils.QR_INVALID_CODE)
+                    .responseMessage("QR code is invalid or missing")
+                    .accountInfo(null)  // Aquí se pasa null porque no tenemos los detalles de la cuenta
+                    .qrCodeImage(null)  // No hay QR si hay un error
+                    .build();
+        }
+
+        // 2. Obtener los datos directamente del DTO
+        String sourceAccountNumber = request.getSourceAccountNumber();
+        String destinationAccountNumber = request.getDestinationAccountNumber();
+        BigDecimal amount = request.getAmount();
+
+        // 3. Validar si las cuentas existen en la base de datos
+        boolean isSourceAccountExist = repository.existsByAccountNumber(sourceAccountNumber);
+        boolean isDestinationAccountExist = repository.existsByAccountNumber(destinationAccountNumber);
+
+        if (!isSourceAccountExist || !isDestinationAccountExist) {
+            return QRCodeResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_NOT_EXIST_CODE)
+                    .responseMessage("One or both accounts do not exist")
+                    .accountInfo(null)  // Aquí se pasa null porque no se puede continuar sin las cuentas
+                    .qrCodeImage(null)  // No hay QR si las cuentas no existen
+                    .build();
+        }
+
+        // 4. Procedemos con la transferencia: Debitar de la cuenta de origen y acreditar en la cuenta de destino
+        User sourceAccountUser = repository.findByAccountNumber(sourceAccountNumber);
+        User destinationAccountUser = repository.findByAccountNumber(destinationAccountNumber);
+
+        // Verificar si el monto de la transferencia no excede el saldo disponible
+        if (amount.compareTo(sourceAccountUser.getAccountBalance()) > 0) {
+            return QRCodeResponse.builder()
+                    .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
+                    .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
+                    .accountInfo(null)  // Aquí se pasa null, ya que no se completa la transacción
+                    .qrCodeImage(null)  // No generamos el QR si hay saldo insuficiente
+                    .build();
+        }
+
+        // Procedemos con la transferencia
+        sourceAccountUser.setAccountBalance(sourceAccountUser.getAccountBalance().subtract(amount));
+        destinationAccountUser.setAccountBalance(destinationAccountUser.getAccountBalance().add(amount));
+
+        repository.save(sourceAccountUser);
+        repository.save(destinationAccountUser);
+
+        // Enviar alertas de correo al usuario que envía el dinero
+        EmailDetails sourceEmailDetails = EmailDetails.builder()
+                .subject("DEBIT ALERT")
+                .recipient(sourceAccountUser.getEmail())
+                .messageBody("The amount of " + amount + " has been deducted from your account! Your current balance is " + sourceAccountUser.getAccountBalance())
+                .build();
+        emailService.sendEmailAlert(sourceEmailDetails);
+
+        // Enviar alertas de correo al usuario que recibe el dinero
+        EmailDetails destinationEmailDetails = EmailDetails.builder()
+                .subject("CREDIT ALERT")
+                .recipient(destinationAccountUser.getEmail())
+                .messageBody("The amount of " + amount + " has been credited to your account from " + sourceAccountUser.getFirstName() + " " + sourceAccountUser.getLastName() + ". Your current balance is " + destinationAccountUser.getAccountBalance())
+                .build();
+        emailService.sendEmailAlert(destinationEmailDetails);
+
+        // 5. Crear un objeto AccountInfo para la cuenta de origen (en este caso solo usamos el origen)
+        AccountInfo accountInfo = AccountInfo.builder()
+                .accountName(sourceAccountUser.getFirstName() + " " + sourceAccountUser.getLastName())
+                .accountNumber(sourceAccountUser.getAccountNumber())
+                .accountBalance(sourceAccountUser.getAccountBalance())
+                .build();
+
+        // 6. Generar un código QR con los datos de la transferencia
+        String logoPath = "C:\\Users\\rober\\Pictures\\logo.png";
+        byte[] qrCodeImage;
+        try {
+            qrCodeImage = qrCodeGenerator.generateQRCodeWithLogo(sourceAccountNumber, destinationAccountNumber, amount, logoPath);
+        } catch (Exception e) {
+            return QRCodeResponse.builder()
+                    .responseCode(AccountUtils.QR_GENERATION_ERROR_CODE)
+                    .responseMessage("Error generating QR code: " + e.getMessage())
+                    .accountInfo(accountInfo)  // Regresamos los datos de la cuenta aunque haya error
+                    .qrCodeImage(null)  // No podemos generar el QR si algo sale mal
+                    .build();
+        }
+
+        // 7. Devolver la respuesta con el código QR generado
+        return QRCodeResponse.builder()
+                .responseCode(AccountUtils.TRANSFER_SUCCESSFUL_CODE)
+                .responseMessage("Transfer Successful. QR Code generated successfully.")
+                .accountInfo(accountInfo)  // Regresamos los datos de la cuenta de origen
+                .qrCodeImage(qrCodeImage)  // Ahora sí, pasamos el QR generado
                 .build();
     }
 

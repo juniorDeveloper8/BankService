@@ -29,6 +29,15 @@ public class AccountUtils {
     public static final String TRANSFER_SUCCESSFUL_CODE = "008";
     public static final String TRANSFER_SUCCESSFUL_MESSAGE = "Transfer successful";
 
+    // Nuevo código para manejo de QR inválido
+    public static final String QR_INVALID_CODE = "009";
+    public static final String QR_INVALID_MESSAGE = "The QR code is invalid or missing. Please check the QR and try again.";
+
+    // Código para manejo de error en la generación del QR
+    public static final String QR_GENERATION_ERROR_CODE = "010";  // Código de error para la generación del QR
+    public static final String QR_GENERATION_ERROR_MESSAGE = "Error generating QR code. Please try again later.";  // Mensaje de error para la generación del QR
+
+
     public static String generatedAccountNumber() {
 
         // Obtenemos el año actual
