@@ -2,10 +2,7 @@
 
 API REST desarrollada en **Spring Boot** que permite realizar operaciones bancarias como **transferencias**, **créditos**, **débitos**, autenticación de usuarios y envío de **reportes por correo electrónico**.
 
-<video width="600" controls>
-  <source src="https://github.com/juniorDeveloper8/BankService/doc/demo.mp4" type="video/mp4">
-  Tu navegador no soporta la reproducción de video.
-</video>
+[![Demo en video](./doc/img.png)](https://drive.google.com/file/d/1aikjWKb9iufXhl6BYv1LNbLispGPI21h/view?usp=sharing)
 
 
 ## 🚀 Características
