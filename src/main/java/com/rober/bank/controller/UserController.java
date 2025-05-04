@@ -109,9 +109,4 @@ public class UserController {
         return userService.transfer(request);
     }
 
-    @PostMapping("qr")
-    public QRCodeResponse transferQR(@RequestBody QRTransferRequest request) {
-        return userService.transferQR(request);
-    }
-
 }

@@ -16,8 +16,6 @@ public interface UserService {
 
     BankResponse transfer(TransferRequest request);
 
-    QRCodeResponse transferQR(QRTransferRequest request);
-
     BankResponse login(LoginDTO loginDTO);
 
     //BankResponse saveQRTransaction(QRTransactionDTO transactionDTO);
