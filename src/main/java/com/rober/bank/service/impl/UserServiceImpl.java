@@ -39,9 +39,6 @@ public class UserServiceImpl implements UserService {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    private QRCodeGenerator qrCodeGenerator;
-
-    @Autowired
     JwtTokenProvider jwtTokenProvider;
 
     @Override
